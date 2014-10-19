@@ -1,4 +1,4 @@
-% Autor:  Vincent R., André Behrens
+% Autor:  Vincent R., André B.
 % ------------------------------------
 
 male(sascha).
@@ -25,8 +25,8 @@ is_child(mandy,jacqueline).
 % ------------------------------------
 
 are_siblings(A, B):-
-   parent(M, V, A),
-   parent(M, V, B),
+   parent(M, F, A),
+   parent(M, F, B),
    A \= B.
 
 parent(A, B, C):-
