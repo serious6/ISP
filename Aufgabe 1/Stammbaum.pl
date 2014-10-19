@@ -25,9 +25,9 @@ is_child(mandy,jacqueline).
 % ------------------------------------
 
 siblings(A, B):-
+   not(A=B),
    parent(Mother, Father, A),
-   parent(Mother, Father, B),
-   not(A=B).
+   parent(Mother, Father, B).
    
 brother(A, B):-
    male(A),
@@ -36,6 +36,14 @@ brother(A, B):-
 sister(A, B):-
    female(A),
    siblings(A, B).
+   
+daughter(A, B):-
+   female(A),
+   parent(B, A).
+   
+son(A, B):-
+   male(A),
+   parent(B, A).
 
 parent(A, B, C):-
    mother(A, C),
@@ -50,10 +58,18 @@ father(A, B):-
    child(A, B).
    
 aunt(A, B):-
-   true.
+   female(A),
+   sister(A, SisterOfA),
+   mother(SisterOfA, B).
+   
+aunt(A, B):-
+   female(A),
+   sister(A, SisterOfA),
+   father(SisterOfA, B).
    
 uncle(A, B):-
-   true.
+   brother(A, BrotherOfA),
+   parent(BrotherOfA, B).
  
 cousin(A, B):-
    child(A, Mother),
