@@ -24,31 +24,47 @@ is_child(mandy,jacqueline).
 
 % ------------------------------------
 
-are_siblings(A, B):-
-   parent(M, F, A),
-   parent(M, F, B),
-   A \= B.
+siblings(A, B):-
+   parent(Mother, Father, A),
+   parent(Mother, Father, B),
+   not(A=B).
+   
+brother(A, B):-
+   male(A),
+   siblings(A, B).
+   
+sister(A, B):-
+   female(A),
+   siblings(A, B).
 
 parent(A, B, C):-
-   is_mother(A, C),
-   is_father(B, C).
+   mother(A, C),
+   father(B, C).
 
-is_mother(A, B):-
+mother(A, B):-
    female(A),
-   is_child(A, B).
+   child(A, B).
  
-is_father(A, B):-
+father(A, B):-
    male(A),
-   is_child(A, B).
+   child(A, B).
+   
+aunt(A, B):-
+   true.
+   
+uncle(A, B):-
+   true.
  
-is_cousin(A, B):-
+cousin(A, B):-
+   child(A, Mother),
+   siblings(Mother, Father),
+   child(B, Father).
+
+nephew(A, B):-
    true.
 
-is_nephew(A, B):-
+half_sister(A, B):-
    true.
 
-is_half_sister(A, B):-
-   true.
-
-is_grand_aunt(A, B):-
+grand_aunt(A, B):-
    true.
