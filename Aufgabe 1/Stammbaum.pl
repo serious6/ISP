@@ -1,4 +1,4 @@
-% Autor:  Vincent R., André B.
+% Autor:  Vincent R., AndrÃ© B.
 % ------------------------------------
 
 male(sascha).
@@ -31,6 +31,9 @@ child(benno,steven).
 child(michelle,benno).
 child(michelle,chantal).
 child(michelle,mandy).
+child(sascha,claire).
+child(mandy,claire).
+
 
 child(mike, brother1).
 child(mike, brother2).
@@ -124,5 +127,8 @@ nephew(A, B):-
    child(X, A),
    siblings(B, X).
 
-% half_sister(A, B):-
-%   .
+half_sister(A, B):-
+	female(A),
+	parent(Y, X, A),
+	parent(Z, X, B),
+	Y \= Z.
