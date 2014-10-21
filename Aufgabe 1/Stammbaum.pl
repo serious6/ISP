@@ -116,16 +116,8 @@ uncle(A, B):-
    parent(_, X,B).
  
 cousin(A, B):-
-   siblings(X1,X2),
-   parent(X2, _,A),
-   parent(X1, _,B),
-   not(A=B).
-   
-cousin(A, B):-
-   siblings(X1,X2),
-   parent(_, X2,A),
-   parent(_, X1,B),
-   not(A=B).
+   uncle(X, A),
+   father(X, B).
    
 nephew(A, B):-
    male(A),
