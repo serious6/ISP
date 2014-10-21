@@ -56,13 +56,34 @@ parent(A, B, C):-
    mother(A, C),
    father(B, C).
 
+grand_parent(A, B, C):-
+   grand_father(A, C),
+   grand_mother(B, C),
+   married(A, B).
+
 mother(A, B):-
    female(A),
    child(A, B).
+
+grand_mother(A, B):-
+   mother(A, X),
+   parent(X, B).
+   
+mother_in_law(A, B):-
+   mother(A, X),
+   married(X, B).
  
 father(A, B):-
    male(A),
    child(A, B).
+   
+grand_father(A, B):-
+   father(A, X),
+   parent(X, B).
+   
+father_in_law(A, B):-
+   father(A, X),
+   married(X, B).
    
 aunt(A, B):-
    female(A),
@@ -84,18 +105,5 @@ nephew(A, B):-
    child(A,X),
    parent(B,X).
 
-half_sister(A, B):-
-   .
-
-grand_father(A, B):-
-   father(A, X),
-   parent(X, B).
-   
-grand_mother(A, B):-
-   mother(A, X),
-   parent(X, B).
-
-grand_parent(A, B, C):-
-   grand_father(A, C),
-   grand_mother(B, C),
-   married(A, B).
+% half_sister(A, B):-
+%   .
