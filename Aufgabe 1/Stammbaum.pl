@@ -5,34 +5,41 @@ male(sascha).
 male(steven).
 male(benno).
 male(justin).
+male(rob).
+male(mike).
 
 female(michelle).
 female(mandy).
 female(chantal).
 female(jacqueline).
+female(rosie).
+female(claire).
 
 married(sascha, michelle).
 married(steven, mandy).
+married(mike, claire).
 
-is_child(sascha,benno).
-is_child(sascha,chantal).
-is_child(michelle,benno).
-is_child(michelle,chantal).
+child(sascha,benno).
+child(sascha,chantal).
+child(benno,steven).
+child(michelle,benno).
+child(michelle,chantal).
+child(michelle,mandy).
 
-is_child(steven,jacqueline).
-is_child(mandy,jacqueline).
+child(steven,jacqueline).
+child(mandy,jacqueline).
 
 % ------------------------------------
 
 siblings(A, B):-
-   not(A=B),
    parent(Mother, Father, A),
-   parent(Mother, Father, B).
+   parent(Mother, Father, B),
+   not(A=B).
    
 brother(A, B):-
    male(A),
    siblings(A, B).
-   
+
 sister(A, B):-
    female(A),
    siblings(A, B).
@@ -59,28 +66,36 @@ father(A, B):-
    
 aunt(A, B):-
    female(A),
-   sister(A, SisterOfA),
-   mother(SisterOfA, B).
-   
-aunt(A, B):-
-   female(A),
-   sister(A, SisterOfA),
-   father(SisterOfA, B).
+   sister(A, X),
+   mother(X, B).
    
 uncle(A, B):-
-   brother(A, BrotherOfA),
-   parent(BrotherOfA, B).
+   sibling(A,X),
+   parent(X,B),
+   male(A).
  
 cousin(A, B):-
-   child(A, Mother),
-   siblings(Mother, Father),
-   child(B, Father).
-
+   sibling(X1,X2),
+   parent(X2,A),
+   parent(X1,B),
+   not(A=B).
+   
 nephew(A, B):-
-   true.
+   child(A,X),
+   parent(B,X).
 
 half_sister(A, B):-
-   true.
+   .
 
-grand_aunt(A, B):-
-   true.
+grand_father(A, B):-
+   father(A, X),
+   parent(X, B).
+   
+grand_mother(A, B):-
+   mother(A, X),
+   parent(X, B).
+
+grand_parent(A, B, C):-
+   grand_father(A, C),
+   grand_mother(B, C),
+   married(A, B).
