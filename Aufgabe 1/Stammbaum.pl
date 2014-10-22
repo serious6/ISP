@@ -25,6 +25,12 @@ married(sascha, michelle).
 married(steven, mandy).
 married(mike, claire).
 
+is_married(X,Y):-
+	married(Y,X), !.
+
+is_married(X,Y):-
+	married(X,Y), !.
+
 child(sascha,benno).
 child(sascha,chantal).
 child(benno,steven).
@@ -50,7 +56,8 @@ child(mandy,jacqueline).
 siblings(A, B):-
    parent(Mother, Father, A),
    parent(Mother, Father, B),
-   not(A=B).
+   not(A=B),
+   !.
    
 brother(A, B):-
    male(A),
@@ -131,4 +138,12 @@ half_sister(A, B):-
 	female(A),
 	parent(Y, X, A),
 	parent(Z, X, B),
-	Y \= Z.
+	Y \= Z,
+	!.
+
+half_sister(A, B):-
+	female(A),
+	parent(X, Y, A),
+	parent(X, Z, B),
+	Y \= Z,
+	!.
