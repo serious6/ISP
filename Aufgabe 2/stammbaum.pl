@@ -31,9 +31,11 @@ is_married(X,Y):-
 is_married(X,Y):-
 	married(X,Y), !.
 
+child(sascha,steven).
 child(sascha,benno).
 child(sascha,chantal).
 child(benno,steven).
+child(michelle,steven).
 child(michelle,benno).
 child(michelle,chantal).
 child(michelle,mandy).
