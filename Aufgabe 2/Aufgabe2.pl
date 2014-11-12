@@ -4,7 +4,7 @@
 start :-
 	writeln('Was willst du denn?'),
 	read_sentence(Satz),
-	frage(Satz, []).
+	frage(Satz, []), !.
 
 % Ergänzungsfrage
 % Wer ist der Bruder von Chantal?
@@ -12,12 +12,26 @@ frage -->
 	interrogativpronomen,
 	verb,
 	anpe(Funk, Name),
+	[?],
 	{
 		Funktion =.. [Funk, Wer, Name],
 		call(Funktion),
 		write(Wer)
 	}.
-	
+
+% Entscheidungsfrage
+% Ist Benno der Bruder von Chantal?
+frage -->
+	verb,
+	eigenname(Name1),
+	anpe(Funk, Name2),
+	[?],
+	{
+		Funktion =.. [Funk, Name1, Name2],
+		call(Funktion),
+		write('Ja')
+	}.
+
 % Artikel, Nomen, Präposition, Eigenname
 anpe(Funk, Name) -->
 	artikel,
