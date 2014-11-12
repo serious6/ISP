@@ -64,7 +64,7 @@ brother(A, B):-
    siblings(A, B).
 
 sister(A, B):-
-   female(A),
+	female(A),
    siblings(A, B).
    
 daughter(A, B):-

@@ -10,47 +10,60 @@ start :-
 % Wer ist der Bruder von Chantal?
 frage -->
 	interrogativpronomen,
-	verb,
-	anpe(Funk, Name),
+	verbalphrase(_, Funk),
+	praepositionphase(Name, _),
 	[?],
 	{
 		Funktion =.. [Funk, Wer, Name],
-		call(Funktion),
+		Funktion,
 		write(Wer)
 	}.
 
 % Entscheidungsfrage
 % Ist Benno der Bruder von Chantal?
 frage -->
-	verb,
-	eigenname(Name1),
-	anpe(Funk, Name2),
+	verbalphrase(Name1, _),
+	nominalphrase(Name2, Funk),
 	[?],
 	{
 		Funktion =.. [Funk, Name1, Name2],
-		call(Funktion),
-		write('Ja')
+		Funktion
 	}.
 
-% Artikel, Nomen, Präposition, Eigenname
-anpe(Funk, Name) -->
-	artikel,
-	nomen(Funk),
-	praeposition,
+verbalphrase(Name, Funk) -->
+	verb,
+	nominalphrase(Name, Funk).
+	
+nominalphrase(Name, _) -->
 	eigenname(Name).
+	
+nominalphrase(_, Funk) -->
+	artikel(Genus),
+	nomen(Genus, Funk).
+	
+nominalphrase(Name, Funk) -->
+	artikel(Genus),
+	nomen(Genus, Funk),
+	praepositionphase(Name, Funk).
 
-interrogativpronomen --> [X], {lex(X, _, interrogativpronomen)}.
-praeposition --> [X], {lex(X, _, praeposition)}.
-eigenname(Name) --> [Name], {lex(Name, _, eigenname)}.
-artikel --> [X], {lex(X, _, artikel)}.
-nomen(Funk) --> [X], {lex(X, Funk, nomen)}.
-verb --> [X], {lex(X, _, verb)}.
+praepositionphase(Name, Funk) -->
+	praeposition,
+	nominalphrase(Name, Funk).
 
-lex(wer, _, interrogativpronomen).
-lex(ist, _, verb).
-lex(der, _, artikel).
-lex(bruder, brother, nomen).
-lex(von, _, praeposition).
+interrogativpronomen --> [X], {lex(X, _, interrogativpronomen, _)}.
+praeposition --> [X], {lex(X, _, praeposition, _)}.
+eigenname(Name) --> [Name], {lex(Name, _, eigenname, _)}.
+artikel(Genus) --> [X], {lex(X, _, artikel, Genus)}.
+nomen(Genus, Funk) --> [X], {lex(X, Funk, nomen, Genus)}.
+verb --> [X], {lex(X, _, verb, _)}.
 
-lex(Name, _, eigenname) :- male(Name).
-lex(Name, _, eigenname) :- female(Name).
+lex(wer, _, interrogativpronomen, _).
+lex(ist, _, verb, _).
+lex(der, _, artikel, maskulin).
+lex(die, _, artikel, feminin).
+lex(bruder, brother, nomen, maskulin).
+lex(schwester, sister, nomen, feminin).
+lex(von, _, praeposition, _).
+
+lex(Name, _, eigenname, _) :- male(Name).
+lex(Name, _, eigenname, _) :- female(Name).
