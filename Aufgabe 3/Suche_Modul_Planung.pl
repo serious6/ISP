@@ -54,7 +54,9 @@ goal_node((_,State,_)):-
 state_member(_,[]):- !,fail.
 
 state_member(State,[FirstState|_]):-
-  lists:subset(State,FirstState), lists:subset(FirstState,State) ,!.
+  lists:subset(State,FirstState),
+  lists:subset(FirstState,State),
+  !.
 
 % Es ist sichergestellt, dass die beiden ersten Klauseln nicht zutreffen.
 state_member(State,[_|RestStates]):-  
