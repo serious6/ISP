@@ -99,11 +99,11 @@ mysubset([H|T],List):-
   mysubset(T,List).
 
 
-expand_help(State,Name,NewState):-
-  "Action suchen"
-  "Conditions testen"
-  "Del-List umsetzen"
-  "Add-List umsetzen".
+expand_help(State,Name,Result):-
+  action(Name,CondList,DelList,AddList), % Action suchen
+  mysubset(CondList,State), % "Conditions testen"
+  lists:subtract(State,DelList,SubtractResult), % Del-List umsetzen
+  lists:union(AddList,SubtractResult,Result). % Add-List umsetzen
   
 expand((_,State,_),Result):-
   findall((Name,NewState,_),expand_help(State,Name,NewState),Result).
