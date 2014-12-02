@@ -1,6 +1,3 @@
-% Informierte Suche
-
-
 eval_paths([]).
 
 eval_paths([FirstPath|RestPaths]):-
@@ -32,5 +29,3 @@ insert_path_informed(NewPath,[FirstPath|RestPaths],[FirstPath|NewRestPaths]):-
 
 cheaper([(_,_,V1)|_],[(_,_,V2)|_]):-
   V1 =< V2.
-  
-
