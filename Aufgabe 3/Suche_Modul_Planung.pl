@@ -54,7 +54,7 @@ eval_path(Algorithm, Path) :-
 
 eval_state(aStar, [(_, State, Value) | _], G) :-
 	heuristic(wrongPos, State, Heuristic),
-	Value is Heuristik + G.
+	Value is Heuristic + G.
 
 eval_state(_, [(_, State, Value) | _], _) :-
 	heuristic(wrongPos, State, Value).

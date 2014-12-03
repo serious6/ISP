@@ -13,11 +13,11 @@ search([[FirstNode | Predecessors] | _], _, [FirstNode | Predecessors]) :-
   goal_node(FirstNode),
   nl, write('SUCCESS'), nl, !.
 
-search([[FirstNode | Predecessors] | RestPaths], Strategy, Solution) :- 
+search([[FirstNode | Predecessors] | RestPaths], Strategy, Solution) :-
   expand(FirstNode, Children),
-  generate_new_paths(Children,[FirstNode|Predecessors],NewPaths),
-  insert_new_paths(Strategy,NewPaths,RestPaths,AllPaths),
-  search(AllPaths,Strategy,Solution).
+  generate_new_paths(Children, [FirstNode | Predecessors], NewPaths),
+  insert_new_paths(Strategy, NewPaths, RestPaths, AllPaths),
+  search(AllPaths, Strategy, Solution).
 
 
 generate_new_paths(Children,Path,NewPaths):-
@@ -59,7 +59,7 @@ insert_new_paths(aStar, NewPaths, OldPaths, AllPaths):-
   write_state(AllPaths).
 
 % Optimistisches Bergsteigen
-insert_new_paths(optimistischesBergsteigen, NewPaths, OldPaths, AllPaths):-
+insert_new_paths(optimistischesBergsteigen, NewPaths, _, AllPaths):-
   eval_paths(optimistischesBergsteigen, NewPaths),
   insert_new_paths_informed(NewPaths, [], AllPaths),
   write_action(AllPaths),
