@@ -20,7 +20,7 @@ search([[FirstNode | Predecessors] | RestPaths], Strategy, Solution) :-
   search(AllPaths, Strategy, Solution).
 
 
-generate_new_paths(Children,Path,NewPaths):-
+generate_new_paths(Children, Path, NewPaths):-
   maplist(get_state, Path, States),
   generate_new_paths_help(Children, Path, States, NewPaths).
 
