@@ -52,7 +52,11 @@ eval_path(Algorithm, Path) :-
 	eval_state(Algorithm, Path, G).
 
 
-eval_state(gierigeBestensuche, [(_, State, Value) | _], _) :-
+eval_state(aStar, [(_, State, Value) | _], G) :-
+	heuristic(wrongPos, State, Heuristic),
+	Value is Heuristik + G.
+
+eval_state(_, [(_, State, Value) | _], _) :-
 	heuristic(wrongPos, State, Value).
 
 
