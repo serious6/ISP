@@ -1,8 +1,8 @@
-eval_paths([]).
+eval_paths(_, []).
 
-eval_paths([FirstPath|RestPaths]):-
-  eval_path(FirstPath),
-  eval_paths(RestPaths).
+eval_paths(Algorithm, [FirstPath|RestPaths]):-
+  eval_path(Algorithm, FirstPath),
+  eval_paths(Algorithm, RestPaths).
 
 insert_new_paths_informed([],OldPaths,OldPaths).
 
