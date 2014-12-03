@@ -14,9 +14,9 @@ search([[FirstNode | Predecessors] | _], _, [FirstNode | Predecessors]) :-
   nl, write('SUCCESS'), nl, !.
 
 search([[FirstNode | Predecessors] | RestPaths], Strategy, Solution) :- 
-  expand(FirstNode, Children),                                    % Nachfolge-Zustände berechnen
-  generate_new_paths(Children,[FirstNode|Predecessors],NewPaths), % Nachfolge-Zustände einbauen 
-  insert_new_paths(Strategy,NewPaths,RestPaths,AllPaths),        % Neue Pfade einsortieren
+  expand(FirstNode, Children),
+  generate_new_paths(Children,[FirstNode|Predecessors],NewPaths),
+  insert_new_paths(Strategy,NewPaths,RestPaths,AllPaths),
   search(AllPaths,Strategy,Solution).
 
 
@@ -24,53 +24,58 @@ generate_new_paths(Children,Path,NewPaths):-
   maplist(get_state, Path, States),
   generate_new_paths_help(Children, Path, States, NewPaths).
 
-
-
-% Abbruchbedingung, wenn alle Kindzustände abgearbeitet sind.
-%
 generate_new_paths_help([],_,_,[]).
 
-
-% Falls der Kindzustand bereits im Pfad vorhanden war, wird der gesamte Pfad verworfen,
-% denn er würde nur in einem Zyklus enden. (Dies betrifft nicht die Fortsetzung des 
-% Pfades mit Geschwister-Kindern.) Es wird nicht überprüft, ob der Kindzustand in einem
-% anderen Pfad vorkommt, denn möglicherweise ist dieser Weg der günstigere.
-%
 generate_new_paths_help([FirstChild|RestChildren],Path,States,RestNewPaths):- 
   get_state(FirstChild,State),state_member(State,States),!,
   generate_new_paths_help(RestChildren,Path,States,RestNewPaths).
 
-
-% Ansonsten, also falls der Kindzustand noch nicht im Pfad vorhanden war, wird er als 
-% Nachfolge-Zustand eingebaut.
-%
 generate_new_paths_help([FirstChild|RestChildren],Path,States,[[FirstChild|Path]|RestNewPaths]):- 
   generate_new_paths_help(RestChildren,Path,States,RestNewPaths).
 
- 
+
 get_state((_,State,_),State).
 
 
-
-% Alle Strategien: Keine neuen Pfade vorhanden
-insert_new_paths(Strategy,[],OldPaths,OldPaths):-
-  write_fail(Strategy,OldPaths),!.
+insert_new_paths(Strategy, [], OldPaths, OldPaths):-
+  write_fail(Strategy, OldPaths), !.
 
 % Tiefensuche
-insert_new_paths(depth,NewPaths,OldPaths,AllPaths):-
-  append(NewPaths,OldPaths,AllPaths),
+insert_new_paths(depth, NewPaths, OldPaths, AllPaths):-
+  append(NewPaths, OldPaths, AllPaths),
   write_action(NewPaths).
 
 % Breitensuche
-insert_new_paths(breadth,NewPaths,OldPaths,AllPaths):-
-  append(OldPaths,NewPaths,AllPaths),
+insert_new_paths(breadth, NewPaths, OldPaths, AllPaths):-
+  append(OldPaths, NewPaths, AllPaths),
   write_next_state(AllPaths),
   write_action(AllPaths).
 
-% Informierte Suche
-insert_new_paths(informed,NewPaths,OldPaths,AllPaths):-
-  eval_paths(NewPaths),
-  insert_new_paths_informed(NewPaths,OldPaths,AllPaths),
+% A*
+insert_new_paths(aStar, NewPaths, OldPaths, AllPaths):-
+  eval_paths(aStar, NewPaths),
+  insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
+  write_action(AllPaths),
+  write_state(AllPaths).
+
+% Optimistisches Bergsteigen
+insert_new_paths(optimistischesBergsteigen, NewPaths, OldPaths, AllPaths):-
+  eval_paths(optimistischesBergsteigen, NewPaths),
+  insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
+  write_action(AllPaths),
+  write_state(AllPaths).
+
+% Bergsteigen mit Backtracking
+insert_new_paths(bergsteigenMitBacktracking, NewPaths, OldPaths, AllPaths):-
+  eval_paths(bergsteigenMitBacktracking, NewPaths),
+  insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
+  write_action(AllPaths),
+  write_state(AllPaths).
+
+% Gierige Bestensuche
+insert_new_paths(gierigeBestensuche, NewPaths, OldPaths, AllPaths):-
+  eval_paths(gierigeBestensuche, NewPaths),
+  insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
   write_action(AllPaths),
   write_state(AllPaths).
 

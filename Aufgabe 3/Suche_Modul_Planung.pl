@@ -46,7 +46,22 @@ state_member(State,[_|RestStates]):-
   state_member(State,RestStates).
 
 
-eval_path([(_,State,Value)|RestPath]):- fail.
+
+eval_path(Algorithm, Path) :-
+	length(Path, G),
+	eval_state(Algorithm, Path, G).
+
+
+eval_state(gierigeBestensuche, [(_, State, Value) | _], _) :-
+	heuristic(wrongPos, State, Value).
+
+
+
+heuristic(wrongPos, State, Value) :-
+	goal_description(GoalState),
+	lists:subtract(GoalState, State, WrongPositions),
+	length(WrongPositions, Value).
+
 
 
 action(pick_up(X),
