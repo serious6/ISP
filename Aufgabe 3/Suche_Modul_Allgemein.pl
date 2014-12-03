@@ -1,3 +1,15 @@
+eval_used_time([]).
+eval_used_time([CurrentStrategy|Rest]):-
+   write('###########################################'),
+   nl,
+   write('Measuring time for '+CurrentStrategy),
+   nl,
+   time(solve(CurrentStrategy)),
+   eval_used_time(Rest),
+   write('###########################################'),
+   nl.
+
+
 solve(Strategy):-
   start_description(StartState),
   solve((start, StartState, _), Strategy).
