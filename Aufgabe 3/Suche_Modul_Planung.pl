@@ -1,31 +1,31 @@
 start_description([
-	block(block1),
-	block(block2),
-	block(block3),
-	block(block4),  %mit Block4
-	on(table,block2),
-	on(table,block3),
-	on(block2,block1),
-	on(table,block4), %mit Block4
-	clear(block1),
-	clear(block3),
-	clear(block4), %mit Block4
-	handempty
+        block(block1),
+        block(block2),
+        block(block3),
+        block(block4),  %mit Block4
+        on(table,block2),
+        on(table,block3),
+        on(block2,block1),
+        on(table,block4), %mit Block4
+        clear(block1),
+        clear(block3),
+        clear(block4), %mit Block4
+        handempty
 ]).
 
 goal_description([
-	block(block1),
-	block(block2),
-	block(block3),
-	block(block4), %mit Block4
-	on(block4,block2), %mit Block4
-	on(table,block3),
-	on(table,block1),
-	on(block1,block4), %mit Block4
-%	on(block1,block2), %ohne Block4
-	clear(block3),
-	clear(block2),
-	handempty
+        block(block1),
+        block(block2),
+        block(block3),
+        block(block4), %mit Block4
+        on(block4,block2), %mit Block4
+        on(table,block3),
+        on(table,block1),
+        on(block1,block4), %mit Block4
+%       on(block1,block2), %ohne Block4
+        clear(block3),
+        clear(block2),
+        handempty
 ]).
 
 
@@ -38,8 +38,8 @@ goal_node((_,State,_)):-
 state_member(_,[]):- !,fail.
 
 state_member(State,[FirstState|_]):-
-  lists:subset(State,FirstState),
-  lists:subset(FirstState,State),
+  mysubset(State,FirstState),
+  mysubset(FirstState,State),
   !.
 
 state_member(State,[_|RestStates]):-  
@@ -48,23 +48,23 @@ state_member(State,[_|RestStates]):-
 
 
 eval_path(Algorithm, Path) :-
-	length(Path, G),
-	eval_state(Algorithm, Path, G).
+        length(Path, G),
+        eval_state(Algorithm, Path, G).
 
 
 eval_state(aStar, [(_, State, Value) | _], G) :-
-	heuristic(wrongPos, State, Heuristic),
-	Value is Heuristic + G.
+        heuristic(wrongPos, State, Heuristic),
+        Value is Heuristic + G.
 
 eval_state(_, [(_, State, Value) | _], _) :-
-	heuristic(wrongPos, State, Value).
+        heuristic(wrongPos, State, Value).
 
 
 
 heuristic(wrongPos, State, Value) :-
-	goal_description(GoalState),
-	lists:subtract(GoalState, State, WrongPositions),
-	length(WrongPositions, Value).
+        goal_description(GoalState),
+        lists:subtract(GoalState, State, WrongPositions),
+        length(WrongPositions, Value).
 
 
 
