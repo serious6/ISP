@@ -2,14 +2,14 @@ start_description([
 	block(block1),
 	block(block2),
 	block(block3),
-	block(block4),  %mit Block4
+%	block(block4),  %mit Block4
 	on(table,block2),
 	on(table,block3),
 	on(block2,block1),
-	on(table,block4), %mit Block4
+%	on(table,block4), %mit Block4
 	clear(block1),
 	clear(block3),
-	clear(block4), %mit Block4
+%	clear(block4), %mit Block4
 	handempty
 ]).
 
@@ -17,12 +17,12 @@ goal_description([
 	block(block1),
 	block(block2),
 	block(block3),
-	block(block4), %mit Block4
-	on(block4,block2), %mit Block4
+%	block(block4), %mit Block4
+%	on(block4,block2), %mit Block4
 	on(table,block3),
 	on(table,block1),
-	on(block1,block4), %mit Block4
-	%  on(block1,block2), %ohne Block4
+%	on(block1,block4), %mit Block4
+	on(block1,block2), %ohne Block4
 	clear(block3),
 	clear(block2),
 	handempty
@@ -46,9 +46,7 @@ state_member(State,[_|RestStates]):-
   state_member(State,RestStates).
 
 
-eval_path([(_,State,Value)|RestPath]):-
-  eval_state(State,"Rest des Literals bzw. der Klausel"
-  "Value berechnen".
+eval_path([(_,State,Value)|RestPath]):- fail.
 
 
 action(pick_up(X),

@@ -21,8 +21,8 @@ search([[FirstNode | Predecessors] | RestPaths], Strategy, Solution) :-
 
 
 generate_new_paths(Children,Path,NewPaths):-
-  maplist(get_state,Path,States),
-  generate_new_paths_help(Children,Path,States,NewPaths).
+  maplist(get_state, Path, States),
+  generate_new_paths_help(Children, Path, States, NewPaths).
 
 
 
@@ -49,10 +49,6 @@ generate_new_paths_help([FirstChild|RestChildren],Path,States,[[FirstChild|Path]
 
  
 get_state((_,State,_),State).
-
-
-
-%%% Strategie:
 
 
 
