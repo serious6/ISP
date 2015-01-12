@@ -21,18 +21,12 @@ public class Problem implements Iterable<Constraint> {
 		}
 	}
 
-	public void setConstraints(List<Constraint> constraints) {
-		if (constraints != null) {
-			this.constraints = constraints;
-		}
-	}
-
 	public void solve() {
 		if (constraints == null) {
 			throw new IllegalArgumentException(
 					"Es liegen keine Constraints vor...");
 		}
-		for (final Constraint constraint : constraints) {
+		for (final Constraint constraint : this) {
 			constraint.solve();
 		}
 	}
