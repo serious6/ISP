@@ -10,6 +10,7 @@ public class EinsteinRiddle {
 		// Constraints hinzufügen:
 
 		// Lösen
+		einsteinRiddle.solve();
 
 		// Ergebnis ausgeben
 	}

@@ -33,6 +33,8 @@ public abstract class Constraint {
 		return result;
 	}
 
-	public abstract void solve();
+	public void solve() {
+
+	}
 
 }
