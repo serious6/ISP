@@ -1,33 +1,28 @@
 package de.haw.resolver;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class Constraint {
 
-	protected Constraint left;
-	protected Constraint right;
+	protected Propagator left;
+	protected Propagator right;
 
-	protected List<?> values = new ArrayList<>();
+	protected Propagator result;
 
-	public Constraint getLeft() {
+	public Propagator getLeft() {
 		return left;
 	}
 
-	public void setLeft(Constraint left) {
+	public void setLeft(Propagator left) {
 		this.left = left;
 	}
 
-	public Constraint getRight() {
+	public Propagator getRight() {
 		return right;
 	}
 
-	public void setRight(Constraint right) {
+	public void setRight(Propagator right) {
 		this.right = right;
 	}
 
-	public List<?> getValues() {
-		return values;
-	}
+	public abstract void solve();
 
 }

@@ -27,7 +27,13 @@ public class Problem {
 	}
 
 	public void solve() {
-
+		if (constraints == null) {
+			throw new IllegalArgumentException(
+					"Es liegen keine Constraints vor...");
+		}
+		for (final Constraint constraint : constraints) {
+			constraint.solve();
+		}
 	}
 
 }
