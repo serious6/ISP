@@ -2,9 +2,10 @@ package de.haw.resolver;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-public class Problem {
+public class Problem implements Iterable<Constraint> {
 
 	private List<Constraint> constraints = new ArrayList<Constraint>();
 
@@ -34,6 +35,11 @@ public class Problem {
 		for (final Constraint constraint : constraints) {
 			constraint.solve();
 		}
+	}
+
+	@Override
+	public Iterator<Constraint> iterator() {
+		return constraints.iterator();
 	}
 
 }

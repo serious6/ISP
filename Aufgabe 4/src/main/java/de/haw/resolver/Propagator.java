@@ -11,6 +11,7 @@ public class Propagator<T> implements Iterable<T> {
 	protected List<T> values = new ArrayList<T>();
 
 	public Propagator(String name) {
+		super();
 		this.name = name;
 	}
 

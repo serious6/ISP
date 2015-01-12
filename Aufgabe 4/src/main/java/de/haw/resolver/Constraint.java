@@ -7,20 +7,30 @@ public abstract class Constraint {
 
 	protected Propagator<?> result;
 
-	public Propagator<?> getLeft() {
-		return left;
+	public Constraint(Propagator<?> left, Propagator<?> right) {
+		super();
+		this.left = left;
+		this.right = right;
 	}
 
-	public void setLeft(Propagator<?> left) {
-		this.left = left;
+	public Propagator<?> getLeft() {
+		return left;
 	}
 
 	public Propagator<?> getRight() {
 		return right;
 	}
 
+	public void setLeft(Propagator<?> left) {
+		this.left = left;
+	}
+
 	public void setRight(Propagator<?> right) {
 		this.right = right;
+	}
+
+	public Propagator<?> getResult() {
+		return result;
 	}
 
 	public abstract void solve();
