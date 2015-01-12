@@ -3,7 +3,9 @@ package de.haw.resolver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Problem implements Iterable<Constraint> {
 
@@ -26,9 +28,21 @@ public class Problem implements Iterable<Constraint> {
 			throw new IllegalArgumentException(
 					"Es liegen keine Constraints vor...");
 		}
-		for (final Constraint constraint : this) {
-			constraint.solve();
+		final Queue<Constraint> alle = new LinkedList<Constraint>(constraints);
+		while (!alle.isEmpty()) {
+			final Constraint current = alle.remove();
+			if (entferneInkonsistenteWerte(current.left, current.right)) {
+				// nachbar
+				alle.add(new Constraint(null, current.left));
+			}
 		}
+	}
+
+	private boolean entferneInkonsistenteWerte(Propagator<?> left,
+			Propagator<?> right) {
+		boolean removed = false;
+
+		return removed;
 	}
 
 	@Override

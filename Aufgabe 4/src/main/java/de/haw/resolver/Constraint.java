@@ -1,6 +1,6 @@
 package de.haw.resolver;
 
-public abstract class Constraint {
+public class Constraint {
 
 	protected Propagator<?> left;
 	protected Propagator<?> right;
@@ -35,6 +35,10 @@ public abstract class Constraint {
 
 	public void solve() {
 
+	}
+
+	public Constraint flip() {
+		return new Constraint(right, left);
 	}
 
 }
