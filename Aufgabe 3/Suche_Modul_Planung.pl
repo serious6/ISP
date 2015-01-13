@@ -53,12 +53,11 @@ eval_path(Algorithm, Path) :-
 
 
 eval_state(aStar, [(_, State, Value) | _], G) :-
-        heuristic(wrongPos, State, Heuristic),
+        heuristic(correctPos, State, Heuristic),
         Value is Heuristic + G.
 
 eval_state(_, [(_, State, Value) | _], _) :-
-        heuristic(wrongPos, State, Value).
-
+        heuristic(correctPos, State, Value).
 
 
 heuristic(wrongPos, State, Value) :-
@@ -66,6 +65,12 @@ heuristic(wrongPos, State, Value) :-
         lists:subtract(GoalState, State, WrongPositions),
         length(WrongPositions, Value).
 
+heuristic(correctPos, State, Value) :-
+        goal_description(GoalState),
+        intersection(State, GoalState, Intersection),
+        length(Intersection, CorrectPositions),
+        length(GoalState, Abstand),
+        Value is (Abstand - CorrectPositions).
 
 
 action(pick_up(X),
