@@ -51,8 +51,8 @@ proc addConstraint*(problem: var Problem, constraint: Constraint) =
     c2.right = constraint.left
     c2.value = constraint.value
     c2.op = constraint.op
-    if constraint.custom != nil:
-      c2.custom = proc (a, b: int): bool = constraint.custom(b, a)
+    #if constraint.custom != nil:
+    #  c2.custom = proc (a, b: int): bool = constraint.custom(b, a)
     problem.constraints.add(c2)
 
 proc addConstraint*(problem: var Problem, custom: proc (a, b: int): bool, a, b: string) =
@@ -65,7 +65,7 @@ proc addConstraint*(problem: var Problem, custom: proc (a, b: int): bool, a, b: 
   var c2: Constraint
   c2.left = b
   c2.right = a
-  c2.custom = proc (a, b: int): bool = custom(b, a)
+  c2.custom = proc (a2, b2: int): bool = custom(b2, a2)
   problem.constraints.add(c2)
 
 proc allDifferent*(problem: var Problem, vars: HashSet[string]) =
@@ -83,11 +83,12 @@ proc solve*(problem: var Problem) =
   if not problem.ac3la(queue):
     return
   else:
+    echo(problem.variables)
     var emptyQueue: seq[Constraint] = @[]
     discard problem.solve2(emptyQueue)
     
 proc solve2(problem: var Problem, queue: var seq[Constraint]): bool =
-  if queue.len() > 0 and not problem.ac3la(queue):
+  if not problem.ac3la(queue):
     return false
   while true:
     var hasGreaterDomain = false
@@ -97,12 +98,14 @@ proc solve2(problem: var Problem, queue: var seq[Constraint]): bool =
         var domain: seq[int] = problem.variables[k].domain
         for value in domain:
           var backup: seq[DomainBackup] = problem.saveDomains()
+          #echo("test " & k & " = " & $(value))
           problem.variables.mget(k).domain = @[value]
           var queue: seq[Constraint] = @[]
           problem.addInvolvedConstraints(k, queue)
           if problem.solve2(queue):
             return true
           else:
+            #echo("restore " & k & " = " & $(value))
             problem.restoreDomains(backup)
     if not hasGreaterDomain:
       break
@@ -141,7 +144,7 @@ proc arcReduce(problem: var Problem, constraint: Constraint): bool = # aka REVIS
     #echo(constraint.left & " domain " & $(problem.variables[constraint.left].domain))
     for v2 in problem.variables[constraint.right].domain:
       #echo(constraint.left & " = " & $(v1) & " cmp " & constraint.right & " = " & $(v2) & " === " & $(constraint.cmp(v1, v2)))
-      if constraint.cmp(v1, v2): # kaputt?
+      if constraint.cmp(v1, v2):
         found = true
         break
     if not found:
