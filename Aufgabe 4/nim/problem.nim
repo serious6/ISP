@@ -1,6 +1,7 @@
 import sets, tables, sequtils
 
 type
+  DomainBackup = tuple[name: string, domain: seq[int]]
   Variable = object of RootObj
     domain*: seq[int]
   Constraint* = object of RootObj
@@ -21,6 +22,11 @@ proc cmp(constraint: Constraint, a, b: int): bool
 proc arcReduce(problem: var Problem, constraint: Constraint): bool
 proc addAllBinaryConstraints(problem: var Problem, queue: var seq[Constraint])
 proc printQueue(queue: var seq[Constraint])
+proc solve2(problem: var Problem, queue: var seq[Constraint]): bool
+proc ac3la(problem: var Problem, queue: var seq[Constraint]): bool
+proc saveDomains(problem: var Problem): seq[DomainBackup]
+proc restoreDomains(problem: var Problem, domains: seq[DomainBackup])
+proc addInvolvedConstraints(problem: var Problem, variable: string, queue: var seq[Constraint])
 
 
 
@@ -35,16 +41,19 @@ proc addVariables*(problem: var Problem, vars: HashSet[string], domain: Slice[in
     problem.variables[variable] = v
 
 proc addConstraint*(problem: var Problem, constraint: Constraint) =
-  problem.constraints.add(constraint)
+  if constraint.right == nil: # unary
+    problem.variables.mget(constraint.left).domain = @[constraint.value]
+  else:
+    problem.constraints.add(constraint)
 
-  var c2: Constraint
-  c2.left = constraint.right
-  c2.right = constraint.left
-  c2.value = constraint.value
-  c2.op = constraint.op
-  if constraint.custom != nil:
-    c2.custom = proc (a, b: int): bool = constraint.custom(b, a)
-  problem.constraints.add(c2)
+    var c2: Constraint
+    c2.left = constraint.right
+    c2.right = constraint.left
+    c2.value = constraint.value
+    c2.op = constraint.op
+    if constraint.custom != nil:
+      c2.custom = proc (a, b: int): bool = constraint.custom(b, a)
+    problem.constraints.add(c2)
 
 proc addConstraint*(problem: var Problem, custom: proc (a, b: int): bool, a, b: string) =
   var c: Constraint
@@ -56,39 +65,74 @@ proc addConstraint*(problem: var Problem, custom: proc (a, b: int): bool, a, b: 
   var c2: Constraint
   c2.left = b
   c2.right = a
-  # WAR BROKEN!!! die parameter wurden nicht vertauscht
   c2.custom = proc (a, b: int): bool = custom(b, a)
   problem.constraints.add(c2)
 
 proc allDifferent*(problem: var Problem, vars: HashSet[string]) =
-  for v1 in vars:
-    for v2 in vars:
-      if v1 != v2:
+  var svars: seq[string] = @[]
+  for v in vars:
+    svars.add(v)
+  for i, v1 in svars:
+    for j, v2 in svars:
+      if j > i:
         problem.addConstraint(v1 |~=| v2)
 
 proc solve*(problem: var Problem) =
-  # unary constraints
-  for constraint in problem.constraints:
-    if constraint.right == nil:
-      problem.variables.mget(constraint.left).domain = @[constraint.value]
-    if constraint.left == nil:
-      problem.variables.mget(constraint.right).domain = @[constraint.value]
-  
   var queue: seq[Constraint] = @[]
   problem.addAllBinaryConstraints(queue)
+  if not problem.ac3la(queue):
+    return
+  else:
+    var emptyQueue: seq[Constraint] = @[]
+    discard problem.solve2(emptyQueue)
+    
+proc solve2(problem: var Problem, queue: var seq[Constraint]): bool =
+  if queue.len() > 0 and not problem.ac3la(queue):
+    return false
+  while true:
+    var hasGreaterDomain = false
+    for k, v in pairs(problem.variables):
+      if v.domain.len() > 1:
+        hasGreaterDomain = true
+        var domain: seq[int] = problem.variables[k].domain
+        for value in domain:
+          var backup: seq[DomainBackup] = problem.saveDomains()
+          problem.variables.mget(k).domain = @[value]
+          var queue: seq[Constraint] = @[]
+          problem.addInvolvedConstraints(k, queue)
+          if problem.solve2(queue):
+            return true
+          else:
+            problem.restoreDomains(backup)
+    if not hasGreaterDomain:
+      break
+  return true
+    
+proc saveDomains(problem: var Problem): seq[DomainBackup] =
+  result = @[]
+  for k, v in pairs(problem.variables):
+    var backup: DomainBackup = (k, v.domain)
+    result.add(backup)
 
+proc restoreDomains(problem: var Problem, domains: seq[DomainBackup]) =
+  for v in domains:
+    problem.variables.mget(v.name).domain = v.domain
+
+proc ac3la(problem: var Problem, queue: var seq[Constraint]): bool =
+  result = true
   #printQueue(queue)
   
-  while queue.len() > 0:
+  while queue.len() > 0 and result:
     var c: Constraint = queue[0]
     queue.delete(first = 0, last = 0)
     if problem.arcReduce(c):
       problem.addNeighbours(c, queue)
+      result = problem.variables[c.left].domain.len() > 0
     #else:
       #echo("REVISE(" & c.left & ", " & c.right & ") bewirkt nichts")
     #printQueue(queue)
 
-proc arcReduce(problem: var Problem, constraint: Constraint): bool =
+proc arcReduce(problem: var Problem, constraint: Constraint): bool = # aka REVISE
   var len = problem.variables[constraint.left].domain.len()
   var i = len - 1
   while i >= 0:
@@ -109,8 +153,7 @@ proc arcReduce(problem: var Problem, constraint: Constraint): bool =
 
 proc addAllBinaryConstraints(problem: var Problem, queue: var seq[Constraint]) =
   for constraint in problem.constraints:
-    if constraint.right != nil and constraint.left != nil:
-      queue.add(constraint)
+    queue.add(constraint)
 
 proc addNeighbours(problem: var Problem, constraint: Constraint, queue: var seq[Constraint]) =
   for c in problem.constraints:
@@ -123,6 +166,11 @@ proc addNeighbours(problem: var Problem, constraint: Constraint, queue: var seq[
           break
       if not found:
         queue.insert(c, 0)
+
+proc addInvolvedConstraints(problem: var Problem, variable: string, queue: var seq[Constraint]) =
+  for c in problem.constraints:
+    if c.right == variable:
+      queue.insert(c, 0)
 
 proc printQueue(queue: var seq[Constraint]) =
   var s = "{"
@@ -153,4 +201,5 @@ proc `|~=|`*(a, b: string): Constraint =
   result.left = a
   result.right = b
   result.op = "!="
-  
+
+
