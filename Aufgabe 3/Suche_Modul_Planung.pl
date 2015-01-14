@@ -1,4 +1,4 @@
-start_description([
+﻿start_description([
         block(block1),
         block(block2),
         block(block3),
@@ -53,11 +53,11 @@ eval_path(Algorithm, Path) :-
 
 
 eval_state(aStar, [(_, State, Value) | _], G) :-
-        heuristic(correctPos, State, Heuristic),
+        heuristic(onTable, State, Heuristic),
         Value is Heuristic + G.
 
 eval_state(_, [(_, State, Value) | _], _) :-
-        heuristic(correctPos, State, Value).
+        heuristic(onTable, State, Value).
 
 
 heuristic(wrongPos, State, Value) :-
@@ -65,12 +65,14 @@ heuristic(wrongPos, State, Value) :-
         lists:subtract(GoalState, State, WrongPositions),
         length(WrongPositions, Value).
 
-heuristic(correctPos, State, Value) :-
-        goal_description(GoalState),
-        intersection(State, GoalState, Intersection),
-        length(Intersection, CorrectPositions),
-        length(GoalState, Abstand),
-        Value is (Abstand - CorrectPositions).
+heuristic(onTable,State,Value) :-
+  goal_description(GoalState),
+  lists:subtract(GoalState, State,WrongPositions),
+  FindAllGoal = (member(SuchPraedikat, WrongPositions), SuchPraedikat = (on(table,_))),
+  findall(SuchPraedikat, FindAllGoal, FindBag), % Elemente werden per backtracking über goal an bag 
+  length(FindBag, NumTable),                                                    % unifiziert
+  length(WrongPositions, WrongPosValue),
+  Value is (WrongPosValue + NumTable * 2).
 
 
 action(pick_up(X),
