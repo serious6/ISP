@@ -49,3 +49,7 @@ p.addConstraint(proc (a, b: int): bool = abs(a - b) == 1, "Malboro", "Wasser")
 solve p
 
 echo(p.variables)
+
+for name in nationalities:
+  if p.variables[name] == p.variables["Fisch"]:
+    echo("Der " & name & " hält einen Fisch")

@@ -100,9 +100,9 @@ proc solve2(problem: var Problem, queue: var seq[Constraint]): bool =
           var backup: seq[DomainBackup] = problem.saveDomains()
           #echo("test " & k & " = " & $(value))
           problem.variables.mget(k).domain = @[value]
-          var queue: seq[Constraint] = @[]
-          problem.addInvolvedConstraints(k, queue)
-          if problem.solve2(queue):
+          var queue2: seq[Constraint] = @[]
+          problem.addInvolvedConstraints(k, queue2)
+          if problem.solve2(queue2):
             return true
           else:
             #echo("restore " & k & " = " & $(value))
@@ -162,17 +162,11 @@ proc addNeighbours(problem: var Problem, constraint: Constraint, queue: var seq[
   for c in problem.constraints:
     if constraint.left == c.right and c.left != constraint.right: # before: rückwärtskante WAR NICHT in problem.constraints drin
       #echo("(" & c.left & ", " & c.right & ") gefunden zum adden")
-      var found = false
-      for cQ in queue:
-        if cQ.left == c.left and cQ.right == c.right:
-          found = true
-          break
-      if not found:
-        queue.insert(c, 0)
+      queue.insert(c, 0)
 
 proc addInvolvedConstraints(problem: var Problem, variable: string, queue: var seq[Constraint]) =
   for c in problem.constraints:
-    if c.right == variable:
+    if c.right == variable and c.left != variable:
       queue.insert(c, 0)
 
 proc printQueue(queue: var seq[Constraint]) =
