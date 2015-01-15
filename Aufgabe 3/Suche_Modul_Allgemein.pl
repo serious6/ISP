@@ -74,7 +74,7 @@ insert_new_paths(aStar, NewPaths, OldPaths, AllPaths):-
 insert_new_paths(optimistischesBergsteigen, NewPaths, _, [BestPath]):-
   eval_paths(optimistischesBergsteigen, NewPaths),
   insert_new_paths_informed(NewPaths, [], [BestPath|Verworfen]),
-  cheaper([BestPath]),
+  cheaper2([BestPath]),
   write_Verworfen(Verworfen),
   write_action([BestPath]),
   write_state([BestPath]).
@@ -93,6 +93,9 @@ insert_new_paths(gierigeBestensuche, NewPaths, OldPaths, AllPaths):-
   insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
   write_action(AllPaths),
   write_state(AllPaths).
+  
+cheaper2([(_,_,V1,_,_,V2)|_]):-
+  V1 =< V2.
   
 write_solution(Path):-
   nl, write('SOLUTION:'), nl,
