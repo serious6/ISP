@@ -76,7 +76,6 @@ insert_new_paths(optimistischesBergsteigen, NewPaths, _, [BestPath]):-
   insert_new_paths_informed(NewPaths, [], [BestPath|Verworfen]),
   write_Verworfen(Verworfen),
   write_action([BestPath]),
-  cheaper2([BestPath]),
   write_state([BestPath]).
 
 % Bergsteigen mit Backtracking
@@ -93,17 +92,6 @@ insert_new_paths(gierigeBestensuche, NewPaths, OldPaths, AllPaths):-
   insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
   write_action(AllPaths),
   write_state(AllPaths).
-  
-cheaper2([[(_, _, Heuristik1)|Rest1]|_]):-
-  write(Heuristik1),
-  write(Rest1),
-  checkCheaper(Heuristik1, Rest1).
-  
-checkCheaper(V1, [V2|R]):-
-  write(V1),
-  write(V2),
-  write(R).
-
   
 write_solution(Path):-
   nl, write('SOLUTION:'), nl,
