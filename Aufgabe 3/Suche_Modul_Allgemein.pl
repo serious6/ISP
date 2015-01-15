@@ -74,8 +74,8 @@ insert_new_paths(aStar, NewPaths, OldPaths, AllPaths):-
 insert_new_paths(optimistischesBergsteigen, NewPaths, _, [BestPath]):-
   eval_paths(optimistischesBergsteigen, NewPaths),
   insert_new_paths_informed(NewPaths, [], [BestPath|Verworfen]),
-  nl, write('Verworfen:'), nl,
-  write_state(Verworfen),
+  cheaper([BestPath]),
+  write_Verworfen(Verworfen),
   write_action([BestPath]),
   write_state([BestPath]).
 
@@ -93,7 +93,6 @@ insert_new_paths(gierigeBestensuche, NewPaths, OldPaths, AllPaths):-
   insert_new_paths_informed(NewPaths, OldPaths, AllPaths),
   write_action(AllPaths),
   write_state(AllPaths).
-
   
 write_solution(Path):-
   nl, write('SOLUTION:'), nl,
@@ -118,3 +117,9 @@ write_fail(depth,[[(_,State)|_]|_]):-
   nl,write('FAIL, go on with: '),write(State),nl.
 
 write_fail(_,_):-  nl,write('FAIL').
+
+write_Verworfen([]).
+
+write_Verworfen([[(_,State)|_]|_]):-
+  nl, write('Verworfen:'), nl,
+  write('State: '),write(State),nl.
