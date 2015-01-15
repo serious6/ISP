@@ -73,7 +73,9 @@ insert_new_paths(aStar, NewPaths, OldPaths, AllPaths):-
 % Optimistisches Bergsteigen
 insert_new_paths(optimistischesBergsteigen, NewPaths, _, [BestPath]):-
   eval_paths(optimistischesBergsteigen, NewPaths),
-  insert_new_paths_informed(NewPaths, [], [BestPath|_]),
+  insert_new_paths_informed(NewPaths, [], [BestPath|Verworfen]),
+  nl, write('Verworfen:'), nl,
+  write_state(Verworfen),
   write_action([BestPath]),
   write_state([BestPath]).
 
